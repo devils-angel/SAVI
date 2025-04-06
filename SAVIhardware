@@ -1,0 +1,99 @@
+#include <math.h>
+
+int a;
+float temperature;
+int B = 3975;                  // B value of the thermistor
+float resistance;
+int heartbeat;
+String emotion;
+int moodIndex;
+
+// Define pin numbers for LEDs
+const int redLED = 2;
+const int blueLED = 3;
+const int yellowLED = 4;
+const int greenLED = 5;
+
+unsigned long lastEmotionChange = 0; // Time of the last emotion change
+unsigned long emotionDuration = 5000; // Duration each emotion stays visible (milliseconds)
+
+void setup() {
+    Serial.begin(9600);
+    randomSeed(analogRead(0)); // Better randomness
+
+    // Set LED pins as OUTPUT
+    pinMode(redLED, OUTPUT);
+    pinMode(blueLED, OUTPUT);
+    pinMode(yellowLED, OUTPUT);
+    pinMode(greenLED, OUTPUT);
+}
+
+void loop() {
+    // Check if it's time to change the emotional state
+    if (millis() - lastEmotionChange >= emotionDuration) {
+        // Read temperature sensor data
+        a = analogRead(0);
+        resistance = (float)(1023-a) * 10000/a; // Get the resistance of the sensor
+        temperature = (1/(log(resistance/10000)/B+1/298.15)-273.15) * 1.9 + 32;   // Convert to temperature in F
+
+        // Simulate Moisture data (random)
+        int moisture = random(35, 38); 
+
+        // Determine emotion based on temperature
+        if (temperature > 80) { // Hot temperature, stress
+            emotion = "stress";
+            heartbeat = random(91, 120);
+        } else if (temperature < 65) { // Cold temperature, sadness
+            emotion = "sad";
+            heartbeat = random(75, 80);
+        } else { // Random happy or normal
+            moodIndex = random(0, 2); // 0 for normal, 1 for happy
+            if (moodIndex == 0) {
+                emotion = "normal";
+                heartbeat = random(75, 85);
+            } else {
+                emotion = "happy";
+                heartbeat = random(85, 90);
+            }
+        }
+// Output emotion and physiological data
+        Serial.print("Current emotional state: ");
+        Serial.println(emotion);
+        Serial.print("Current temperature is ");
+        Serial.print(temperature);
+        Serial.println(" degrees Fahrenheit");
+        Serial.print("Moisture is ");
+        Serial.print(moisture); 
+        Serial.println("%");
+        Serial.print("Heartbeat is ");
+        Serial.print(heartbeat);
+        Serial.println(" bpm");
+
+        // Turn off all LEDs before turning on the new one
+        digitalWrite(redLED, LOW);
+        digitalWrite(blueLED, LOW);
+        digitalWrite(yellowLED, LOW);
+        digitalWrite(greenLED, LOW);
+
+        // Emotional state-specific feedback
+        if (emotion == "normal") {
+            Serial.println("You're in a calm state—ideal for thoughtful investment decisions.");
+            digitalWrite(greenLED, HIGH);   // Turn on green LED for normal state
+        } else if (emotion == "sad") {
+            Serial.println("Sadness may affect judgment. Take time to reflect before acting.");
+            digitalWrite(blueLED, HIGH);    // Turn on blue LED for sadness
+        } else if (emotion == "happy") {
+            Serial.println("Happiness is great—just stay mindful of overconfidence in your choices.");
+            digitalWrite(yellowLED, HIGH);  // Turn on yellow LED for happiness
+        } else if (emotion == "stress") {
+            Serial.println("You seem stressed—making investment choices under pressure can lead to poor choices. Maybe take a break and do some more research!");
+            digitalWrite(redLED, HIGH);     // Turn on red LED for stress
+        }
+
+        // Update the time of the last emotion change
+        lastEmotionChange = millis();
+    }
+
+    Serial.println();  // Space between readings
+    delay(200); // Small delay to avoid too fast reading
+}
