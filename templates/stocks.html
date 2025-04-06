@@ -31,64 +31,134 @@
         tr:nth-child(even) {
             background-color: #1f2937;
         }
+
+        .prediction-box {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .prediction-box h2 {
+            margin-top: 0;
+        }
+
     </style>
 </head>
 <body>
     <h1>Stock Data</h1>
-    <canvas id="lineChart" width="800" height="400"></canvas>
+    <form method="get" action="/stocks">
+        <label for="ticker">Select Ticker:</label>
+        <select name="ticker" id="ticker">
+            {% for t in tickers %}
+            <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select>
+    
+        <input type="hidden" name="start" value="{{ start_date }}">
+        <input type="hidden" name="end" value="{{ end_date }}">
+        <button type="submit">Load</button>
+    </form>
+    <canvas id="lineChart" width="500" height="200"></canvas>
+    <canvas id="volumeChart" width="500" height="200"></canvas>
 
-<script>
-    const stockData = {{ rows|tojson }};
-    const labels = stockData.map(row => row.date);
-    const closePrices = stockData.map(row => row.adjclose);
+    <script>
+        const stockData = {{ rows|tojson }};
+        const labels = stockData.map(row => row.date);
+        const closePrices = stockData.map(row => row.adjclose);
+        const volumes = stockData.map(row => row.volume);
 
-    const ctx = document.getElementById('lineChart').getContext('2d');
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Close Price',
-                data: closePrices,
-                borderColor: '#38bdf8',
-                backgroundColor: 'rgb(247, 243, 9)',
-                fill: true,
-                tension: 0.3,
-                pointRadius: 2,
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    ticks: { color: '#ffffff' }
-                },
-                y: {
-                    ticks: { color: '#ffffff' }
-                }
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Close Price',
+                    data: closePrices,
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgb(247, 243, 9)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 2,
+                }]
             },
-            plugins: {
-                legend: { labels: { color: '#ffffff' } }
+            options: {
+                scales: {
+                    x: {
+                        ticks: { color: '#ffffff' }
+                    },
+                    y: {
+                        ticks: { color: '#ffffff' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#ffffff' } }
+                }
             }
-        }
-    });
-</script>
-{% if rows %}
-    <table>
-        <tr>
-            {% for key in rows[0].keys() %}
-            <th>{{ key }}</th>
+        });
+    
+        const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+        const volumeChart = new Chart(volumeCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Volume',
+                    data: volumes,
+                    backgroundColor: '#90EE90',
+                    borderColor: '#38bdf8',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: { color: '#ffffff' }
+                    },
+                    y: {
+                        ticks: { color: '#ffffff' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: '#ffffff' } }
+                }
+            }
+        });
+    </script>
+
+    {% if prediction_text is defined and confidence is defined %}
+    <div class="prediction-box">
+        <h2>Model Prediction</h2>
+        <p><strong>Prediction:</strong> {{ prediction_text }}</p>
+        <p><strong>Confidence:</strong> {{ confidence|round(4) }}</p>
+    </div>
+    {% endif %}
+
+    {% if gemini_response is defined %}
+    <div class="prediction-box">
+        <h2>Gemini Suggestion </h2>
+        <p> {{ gemini_response }}</p>
+    </div>
+    {% endif %}
+
+    <!-- {% if rows %}
+        <table>
+            <tr>
+                {% for key in rows[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in rows %}
+            <tr>
+                {% for value in row.values() %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% for row in rows %}
-        <tr>
-            {% for value in row.values() %}
-            <td>{{ value }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No stock data available for this filter.</p>
-{% endif %}
+        </table>
+    {% else %}
+        <p>No stock data available for this filter.</p>
+    {% endif %} -->
 </body>
 </html>
