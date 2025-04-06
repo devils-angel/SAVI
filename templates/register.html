@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register | SAVI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+            width: 350px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #f8fafc;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 6px;
+            border: none;
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        input:focus {
+            outline: 2px solid #38bdf8;
+            background: #475569;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #38bdf8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0ea5e9;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .link a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <h1>Create Account</h1>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.username(class_='form-control', placeholder='Username') }}
+            {{ form.password(class_='form-control', placeholder='Password') }}
+            {{ form.submit(class_='btn btn-primary') }}
+        </form>
+        <div class="link">
+            <a href="{{ url_for('login') }}">Already have an account? Log in</a>
+        </div>
+    </div>
+</body>
+
+</html>
