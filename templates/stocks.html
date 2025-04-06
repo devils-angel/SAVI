@@ -43,6 +43,30 @@
             margin-top: 0;
         }
 
+        .notification-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #1e293b;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid #334155;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .notification-tab {
+            color: white;
+            text-align: center;
+        }
+        
+        .notification-tab .icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -141,6 +165,21 @@
         <p> {{ gemini_response }}</p>
     </div>
     {% endif %}
+
+    <div class="notification-bar">
+        <div class="notification-tab">
+            <span class="icon">❤️</span>
+            Heart
+        </div>
+        <div class="notification-tab">
+            <span class="icon">🌡️</span>
+            Temp
+        </div>
+        <div class="notification-tab">
+            <span class="icon">💧</span>
+            Moisture
+        </div>
+    </div>
 
     <!-- {% if rows %}
         <table>
