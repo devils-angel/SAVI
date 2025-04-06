@@ -7,9 +7,13 @@ SAVI is a beginner-friendly web-based stock trading simulator that allows users 
 
 ## Challenges we ran into
 --- One of the most challenging aspects was integrating the Gemini API with our machine learning model, as it required seamless communication and compatibility between both components.
+
 --- Finding a suitable dataset and defining a consistent happy flow for the application took significant time and experimentation due to data limitations and workflow inconsistencies.
+
 --- With one team member from Computer Science and the other from Computer Engineering, we had to merge our distinct skill sets to tackle both software development and hardware integration effectively.
+
 --- We struggled to measure haptic responses using the sensors available but adapted by analyzing body cues as an alternative solution.
+
 --- Given the 24-hour timeframe of the hackathon, it was pretty challenging to bring these ideas together.
 
 ## Accomplishments that we're proud of
