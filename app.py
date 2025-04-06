@@ -1,11 +1,11 @@
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
-
+import pandas as pd
 app = Flask(__name__)
 
 bcrypt = Bcrypt(app)
@@ -69,7 +69,8 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('display_stocks', ticker='ASML', start='2022-01-03', end='2022-01-31'))
+
             else:
                 flash('Incorrect password. Please try again.', 'error')  
         else:
@@ -105,7 +106,49 @@ def register():
 
     return render_template('register.html', form=form)
 
+df = pd.read_csv("stock_data.csv", parse_dates=["date"])
+#df.columns = df.columns.str.strip().str.lower()
+df['date'] = pd.to_datetime(df['date']) 
 
+@app.route('/api/filter_stocks', methods=['GET'])
+def filter_stocks():
+    ticker = request.args.get('ticker')
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+
+    if not ticker or not start_date or not end_date:
+        return jsonify({'error': 'Missing required parameters'}), 400
+
+    filtered = df[
+        (df['ticker'] == ticker) &
+        (df['date'] >= pd.to_datetime(start_date)) &
+        (df['date'] <= pd.to_datetime(end_date))
+    ]
+
+    return filtered.to_json(orient="records") 
+
+@app.route('/stocks')
+@login_required
+def display_stocks():
+    ticker = request.args.get('ticker')
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
+
+    if not ticker or not start_date or not end_date:
+        return "Please provide ticker, start, and end in the URL", 400
+
+    filtered = df[
+        (df['ticker'] == ticker) &
+        (df['date'] >= pd.to_datetime(start_date)) &
+        (df['date'] <= pd.to_datetime(end_date))
+    ]
+
+    columns_to_display = [
+        'date', 'open', 'adjclose', 'volume', 'ticker',
+        'RSIadjclose15', 'RSIvolume15'
+    ]
+
+    return render_template('stocks.html', rows=filtered[columns_to_display].to_dict(orient='records'))
 
 if __name__ == "__main__":
     with app.app_context(): 

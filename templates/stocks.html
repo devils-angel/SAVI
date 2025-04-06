@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Filtered Stock Data</title>
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            border: 1px solid #334155;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #1e293b;
+        }
+
+        tr:nth-child(even) {
+            background-color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Data</h1>
+    <canvas id="lineChart" width="800" height="400"></canvas>
+
+<script>
+    const stockData = {{ rows|tojson }};
+    const labels = stockData.map(row => row.date);
+    const closePrices = stockData.map(row => row.adjclose);
+
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Close Price',
+                data: closePrices,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgb(247, 243, 9)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 2,
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    ticks: { color: '#ffffff' }
+                },
+                y: {
+                    ticks: { color: '#ffffff' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#ffffff' } }
+            }
+        }
+    });
+</script>
+{% if rows %}
+    <table>
+        <tr>
+            {% for key in rows[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in rows %}
+        <tr>
+            {% for value in row.values() %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No stock data available for this filter.</p>
+{% endif %}
+</body>
+</html>
