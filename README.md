@@ -6,6 +6,11 @@ Investing isn’t just about numbers — it's about future. Many beginner invest
 SAVI is a beginner-friendly web-based stock trading simulator that allows users to buy or sell listed stocks based on simple market data and predictions. It analyzes historical trends to suggest whether an investment decision is likely to be profitable. What sets SAVI apart is its integration with a hardware haptic device that monitors the user's physiological signals (like pulse or grip pressure) to infer emotional and excitement levels. Before a trade is confirmed, SAVI evaluates whether the user is in the right emotional state to make sound financial decisions — teaching them to invest not just with logic, but with self-awareness.
 
 ## Challenges we ran into
+---One of the most challenging aspects was integrating the Gemini API with our machine learning model, as it required seamless communication and compatibility between both components.
+---Finding a suitable dataset and defining a consistent happy flow for the application took significant time and experimentation due to data limitations and workflow inconsistencies.
+---With one team member from Computer Science and the other from Computer Engineering, we had to merge our distinct skill sets to tackle both software development and hardware integration effectively.
+---We struggled to measure haptic responses using the sensors available but adapted by analyzing body cues as an alternative solution.
+---Given the 24-hour timeframe of the hackathon, it was pretty challenging to bring these ideas together.
 
 ## Accomplishments that we're proud of
 Built an end-to-end application that blends data, emotion, and education into a single interactive platform.
