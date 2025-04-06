@@ -10,7 +10,6 @@ import pandas as pd
 from inference import ModelPredict
 import google.generativeai as genai
 from dotenv import load_dotenv
-from utils import analyze_sentiment
 app = Flask(__name__)
 
 bcrypt = Bcrypt(app)
@@ -112,24 +111,6 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/recommend')
-def recommend():
-    return render_template('recommend.html')
-
-
-@app.route('/analyze', methods=['POST'])
-# @login_required
-def analyze():
-    data = request.json
-    text = data.get('text', '')
-    score, sentiment, recommendation = analyze_sentiment(text)
-    return jsonify({
-        'score': score,
-        'sentiment': sentiment,
-        'recommendation': recommendation
-    })
-        
-        
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
